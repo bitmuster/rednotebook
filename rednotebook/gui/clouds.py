@@ -140,7 +140,7 @@ class Cloud(browser.HtmlView):
             delta_count = 1
 
         min_font_size = 10
-        max_font_size = 40
+        max_font_size = 20
 
         font_delta = max_font_size - min_font_size
 
