@@ -501,16 +501,27 @@ class MainWindow:
 
     def on_quick_link_A_button_clicked(self, widget):
         print('A')
+        self.journal.load_day( datetime.date(2010,1,1) )
+
     def on_quick_link_B_button_clicked(self, widget):
         print('B')
+        self.journal.load_day( datetime.date(2010,1,2) )
+
     def on_quick_link_C_button_clicked(self, widget):
         print('C')
+        self.journal.load_day( datetime.date(2010,1,3) )
+
     def on_quick_link_D_button_clicked(self, widget):
         print('D')
+        self.journal.load_day( datetime.date(2010,1,4) )
+
     def on_quick_link_E_button_clicked(self, widget):
         print('E')
+        self.journal.load_day( datetime.date(2010,1,5) )
+
     def on_quick_link_F_button_clicked(self, widget):
         print('F')
+        self.journal.load_day( datetime.date(2010,1,6) )
 
     def on_browser_decide_policy(self, webview, decision, decision_type):
         '''
