@@ -191,6 +191,13 @@ class MainWindow:
 
             'on_main_frame_delete_event': self.on_main_frame_delete_event,
 
+            'on_quick_link_A_button_clicked': self.on_quick_link_A_button_clicked,
+            'on_quick_link_B_button_clicked': self.on_quick_link_B_button_clicked,
+            'on_quick_link_C_button_clicked': self.on_quick_link_C_button_clicked,
+            'on_quick_link_D_button_clicked': self.on_quick_link_D_button_clicked,
+            'on_quick_link_E_button_clicked': self.on_quick_link_E_button_clicked,
+            'on_quick_link_F_button_clicked': self.on_quick_link_F_button_clicked,
+
             # connect_signals can only be called once, it seems
             # Otherwise RuntimeWarnings are raised: RuntimeWarning: missing handler '...'
         }
@@ -491,6 +498,19 @@ class MainWindow:
 
     def on_forward_one_day_button_clicked(self, widget):
         self.journal.go_to_next_day()
+
+    def on_quick_link_A_button_clicked(self, widget):
+        print('A')
+    def on_quick_link_B_button_clicked(self, widget):
+        print('B')
+    def on_quick_link_C_button_clicked(self, widget):
+        print('C')
+    def on_quick_link_D_button_clicked(self, widget):
+        print('D')
+    def on_quick_link_E_button_clicked(self, widget):
+        print('E')
+    def on_quick_link_F_button_clicked(self, widget):
+        print('F')
 
     def on_browser_decide_policy(self, webview, decision, decision_type):
         '''
