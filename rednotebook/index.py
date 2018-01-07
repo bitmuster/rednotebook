@@ -30,7 +30,10 @@ class Index:
 
     def remove(self, date, words):
         for word in set(word.lower() for word in words):
-            self._word_to_dates[word].remove(date)
+            try:
+                self._word_to_dates[word].remove(date)
+            except:
+                pass # The date is not in the list -> ignore
             if not self._word_to_dates[word]:
                 del self._word_to_dates[word]
 
