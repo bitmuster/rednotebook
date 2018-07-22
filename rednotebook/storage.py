@@ -121,6 +121,10 @@ def _save_month_to_disk(month, journal_dir):
         year_and_month = format_year_and_month(month.year_number, month.month_number)
         return os.path.join(journal_dir, '%s%s.txt' % (year_and_month, infix))
 
+    def dumpmd(name, text):
+        with open(name,"w") as f:
+            f.write(text)
+
     old = get_filename('.old')
     new = get_filename('.new')
     filename = get_filename('')
@@ -131,6 +135,14 @@ def _save_month_to_disk(month, journal_dir):
 
     with codecs.open(new, 'wb', encoding='utf-8') as f:
         # Write readable unicode and no Python directives.
+        print("Dumping content")
+        print(type(content)) # dict
+        print(content)
+        # {20: {'text': 'escalate'}, 21: {'text': 'suddenly weirdness\n'}, 22: {'text': 'jabam\njobam\n'}}
+        for c in content.keys():
+            print(filename[:-11], filename[-11:-4], str(c), ".md") #['text'])
+            dumpmd(filename[:-11]+"markdown/"+filename[-11:-4]+"-"+str(c)+".md", str(content[c]['text']))
+            print(str(content[c]['text']))
         yaml.dump(content, f, Dumper=Dumper, allow_unicode=True)
 
     if os.path.exists(filename):
