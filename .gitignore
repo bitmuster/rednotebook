@@ -12,4 +12,6 @@ debian/debhelper-build-stamp
 debian/files
 debian/rednotebook.postinst.debhelper
 debian/rednotebook.prerm.debhelper
-debian/rednotebook.substvars
+idebian/rednotebook.substvars
+html/*
+
