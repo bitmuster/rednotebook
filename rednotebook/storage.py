@@ -141,7 +141,7 @@ def _save_month_to_disk(month, journal_dir):
         # {20: {'text': 'escalate'}, 21: {'text': 'suddenly weirdness\n'}, 22: {'text': 'jabam\njobam\n'}}
         for c in content.keys():
             print(filename[:-11], filename[-11:-4], str(c), ".md") #['text'])
-            dumpmd(filename[:-11]+"markdown/"+filename[-11:-4]+"-"+str(c)+".md", str(content[c]['text']))
+            dumpmd(filename[:-11]+"markdown/"+filename[-11:-4]+"-{0:02}.md".format(c), str(content[c]['text']))
             print(str(content[c]['text']))
         yaml.dump(content, f, Dumper=Dumper, allow_unicode=True)
 
