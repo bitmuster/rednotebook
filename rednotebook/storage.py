@@ -122,7 +122,7 @@ def _save_month_to_disk(month, journal_dir):
         return os.path.join(journal_dir, '%s%s.txt' % (year_and_month, infix))
 
     def dumpmd(name, text):
-        with open(name,"w") as f:
+        with open(name,"w+") as f:
             f.write(text)
 
     old = get_filename('.old')
