@@ -19,3 +19,23 @@ def test_roundtrip():
     assert set(loaded) == {'2018-07', '2018-06'}
     assert loaded['2018-07'].days[28].text == sample_text1
     assert loaded['2018-06'].days[8].text == sample_text2
+
+def test_mtime_roundtrip(mocker):
+    mocker.patch('os.path.getmtime', return_value = 88)
+    days1 = { 1 : {'text' : 'Monday'}, 2: {'text' : 'Tuesday'}}
+    days2 = { 1 : {'text' : 'Monday'}, 2: {'text' : 'Tuesday'}}
+    sample_months = {
+        '2018-07': Month(2018, 7, days1),
+        '2018-06': Month(2018, 6, days2),
+    }
+    storage=FsStorage()
+    with TemporaryDirectory() as td:
+        storage.save_months_to_disk(sample_months, td, saveas=True)
+        loaded = storage.load_all_months_from_disk(td)
+
+    assert isinstance(loaded, dict)
+    assert set(loaded) == {'2018-07', '2018-06'}
+    assert loaded['2018-07'].days[1].text == 'Monday'
+    assert loaded['2018-06'].days[2].text == 'Tuesday'
+    assert loaded['2018-07'].mtime == 88
+    assert loaded['2018-06'].mtime == 88
