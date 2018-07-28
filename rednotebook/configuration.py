@@ -53,6 +53,7 @@ class Config(dict):
         'mainFrameY': None,
         'leftDividerPosition': 250,
         'rightDividerPosition': None,
+        'storeSeparateFiles': 'False'
     }
 
     obsolete_keys = set([

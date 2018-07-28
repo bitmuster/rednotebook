@@ -319,6 +319,9 @@ class Journal:
         else:
             self.show_message(_('Nothing to save'), error=False)
 
+        storage_type = self.config.read('storeSeparateFiles')
+        # Seems we need to use the config, so that is stored
+
         self.config.save_to_disk()
 
         if not (exit_imminent or changing_journal) and something_saved:
