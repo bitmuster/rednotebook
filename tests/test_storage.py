@@ -21,7 +21,7 @@ def test_roundtrip():
     assert loaded['2018-06'].days[8].text == sample_text2
 
 def test_mtime_roundtrip(mocker):
-    mocker.patch('os.path.getmtime', return_value = 88)
+    mocker.patch('os.path.getmtime', side_effect = [80,81,82,83])
     days1 = { 1 : {'text' : 'Monday'}, 2: {'text' : 'Tuesday'}}
     days2 = { 1 : {'text' : 'Monday'}, 2: {'text' : 'Tuesday'}}
     sample_months = {
@@ -35,7 +35,7 @@ def test_mtime_roundtrip(mocker):
 
     assert isinstance(loaded, dict)
     assert set(loaded) == {'2018-07', '2018-06'}
-    assert loaded['2018-07'].days[1].text == 'Monday'
     assert loaded['2018-06'].days[2].text == 'Tuesday'
-    assert loaded['2018-07'].mtime == 88
-    assert loaded['2018-06'].mtime == 88
+    assert loaded['2018-07'].days[1].text == 'Monday'
+    assert loaded['2018-06'].mtime == 82
+    assert loaded['2018-07'].mtime == 83
