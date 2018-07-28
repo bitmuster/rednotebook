@@ -165,7 +165,7 @@ from rednotebook import backup
 from rednotebook.util.statistics import Statistics
 from rednotebook.gui.main_window import MainWindow
 from rednotebook import index
-from rednotebook import storage
+from rednotebook.storage import FsStorage
 from rednotebook.data import Month
 
 
@@ -183,6 +183,7 @@ class Journal:
 
         logging.info('Running in portable mode: %s' % self.dirs.portable)
 
+        self.storage=FsStorage()
         self.month = None
         self.date = None
         self.months = {}
@@ -303,7 +304,7 @@ class Journal:
             return True
 
         try:
-            something_saved = storage.save_months_to_disk(
+            something_saved = self.storage.save_months_to_disk(
                 self.months, self.dirs.data_dir, exit_imminent, saveas)
         except (IOError, OSError) as err:
             logging.error('Saving month files failed: {}'.format(err))
@@ -348,7 +349,7 @@ class Journal:
         self.frame.search_box.clear()
         self.search_index.clear()
 
-        self.months = storage.load_all_months_from_disk(data_dir)
+        self.months = self.storage.load_all_months_from_disk(data_dir)
 
         # Nothing to save before first day change
         self.load_day(self.actual_date)
