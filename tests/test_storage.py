@@ -45,14 +45,14 @@ def test_mtime_roundtrip(mocker):
 def test_plain_separate():
     some = "something"
     something = "something completely different"
-    sample_month = {
+    sample_months = {
         '2018-01': Month(2018, 1, {5: {'text': some}, 6: {'text': something}}),
         '2018-02': Month(2018, 2, {5: {'text': some}, 6: {'text': something}}),
         '2018-03': Month(2018, 3, {5: {'text': some}, 6: {'text': something}}),
     }
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
-        storage.save_months_to_disk(sample_month, td, saveas=True)
+        storage.save_months_to_disk(sample_months, td, saveas=True)
         loaded = storage.load_all_months_from_disk(td)
 
     assert isinstance(loaded, dict)
@@ -65,10 +65,10 @@ def test_plain_separate():
 
 def test_multiline_stuff():
     multiline = "\n things\n\n other things\n"
-    sample_month = {
+    sample_months = {
         '2018-01': Month(2018, 1, {5: {'text': multiline}}) }
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
-        storage.save_months_to_disk(sample_month, td, saveas=True)
+        storage.save_months_to_disk(sample_months, td, saveas=True)
         loaded = storage.load_all_months_from_disk(td)
     assert loaded['2018-01'].days[5].text == multiline
