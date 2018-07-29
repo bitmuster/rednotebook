@@ -2,6 +2,8 @@ from tempfile import TemporaryDirectory
 
 from rednotebook.data import Month
 from rednotebook.storage import FsStorage
+from rednotebook.storage import StorageSeparateFiles
+
 
 def test_roundtrip():
     sample_text1 = "This is some sample text"
@@ -39,3 +41,20 @@ def test_mtime_roundtrip(mocker):
     assert loaded['2018-07'].days[1].text == 'Monday'
     assert loaded['2018-06'].mtime == 82
     assert loaded['2018-07'].mtime == 83
+
+def test_plain_separate():
+    some = "something"
+    something = "something completely different"
+    sample_month = {
+        '2018-01': Month(2018, 1, {5: {'text': some}, 6: {'text': something}}),
+        '2018-02': Month(2018, 2, {5: {'text': some}, 6: {'text': something}}),
+        '2018-03': Month(2018, 3, {5: {'text': some}, 6: {'text': something}}),
+    }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        storage.save_months_to_disk(sample_month, td, saveas=True)
+        loaded = storage.load_all_months_from_disk(td)
+
+    #assert isinstance(loaded, dict)
+    #assert set(loaded) == {'2018-07'}
+    #assert loaded['2018-07'].days[28].text == sample

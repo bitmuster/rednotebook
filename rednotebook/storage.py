@@ -41,9 +41,12 @@ except ImportError:
 
 from rednotebook.data import Month
 
-class FsStorage():
+class Storage():
+
     def format_year_and_month(self, year, month):
         return '%04d-%02d' % (year, month)
+
+class FsStorage(Storage):
 
     def get_journal_files(self, data_dir):
         # Format: 2010-05.txt
@@ -166,4 +169,30 @@ class FsStorage():
 
         return something_saved
 
+class StorageSeparateFiles(Storage):
 
+    def get_journal_files(self, data_dir):
+        pass
+
+
+    def save_months_to_disk(self, months, journal_dir,
+                            exit_imminent=False, saveas=False):
+        for keym, month in months.items():
+            for keyd, day in month.days.items():
+                assert int(keym[:-3]) == month.year_number
+                assert int(keym[-2:]) == month.month_number
+                print( '\t' + day.text )
+                path = os.path.join (journal_dir, "%02i"%month.year_number,
+                                     "%02i"%month.month_number )
+                print('Path:', path)
+                os.makedirs(path, exist_ok=True)
+                with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
+                    f.write(day.text)
+        return True
+
+    def load_all_months_from_disk(self, data_dir):
+        return {}
+    def load_all_years_from_disk(self):
+        pass
+    def load_all_other_Stuff_from_disk(self):
+        pass
