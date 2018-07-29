@@ -180,7 +180,7 @@ class MainMenuBar:
             self.journal.show_message(_('Please select an empty directory.'),
                                       title=title, error=True)
             return False
-        elif action in ['open'] and not list(storage.get_journal_files(new_dir)):
+        elif action in ['open'] and not list(self.journal.storage.get_journal_files(new_dir)):
             self.journal.show_message(_('This directory contains no journal files:') +
                                       ' ' + new_dir, title=title, error=True)
             return False

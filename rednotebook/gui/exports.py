@@ -30,6 +30,7 @@ from rednotebook.util import dates
 from rednotebook.gui import customwidgets
 from rednotebook.gui.customwidgets import Calendar, AssistantPage, \
     RadioButtonPage, PathChooserPage, Assistant
+from rednotebook.storage import StorageSeparateFiles
 
 
 class DatePage(AssistantPage):
@@ -449,9 +450,14 @@ class ExportAssistant(Assistant):
 
     def export(self):
         format = self.exporter.FORMAT
-        export_string = self.get_export_string(format)
-        filesystem.write_file(self.path, export_string)
-        self.journal.show_message(_('Content exported to %s') % self.path)
+        if format == 'SeparateFiles':
+            storage = StorageSeparateFiles()
+            path = self.path # This needs to be tweaked manually !!!
+            storage.save_months_to_disk(self.journal.months, path, saveas=True)
+        else:
+            export_string = self.get_export_string(format)
+            filesystem.write_file(self.path, export_string)
+            self.journal.show_message(_('Content exported to %s') % self.path)
 
 
 class Exporter:
@@ -517,9 +523,14 @@ class LatexExporter(Exporter):
     EXTENSION = 'tex'
     FORMAT = 'tex'
 
+class SeparateFilesJournalExporter(Exporter):
+    NAME = 'SeparateFiles'
+    EXTENSION = ''
+    FORMAT = 'SeparateFiles'
 
 def get_exporters():
-    exporters = [PlainTextExporter, HtmlExporter, LatexExporter]
+    exporters = [PlainTextExporter, HtmlExporter,
+                 LatexExporter, SeparateFilesJournalExporter]
 
     # Instantiate exporters
     return [exporter() for exporter in exporters]
