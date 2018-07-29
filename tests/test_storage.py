@@ -55,6 +55,10 @@ def test_plain_separate():
         storage.save_months_to_disk(sample_month, td, saveas=True)
         loaded = storage.load_all_months_from_disk(td)
 
-    #assert isinstance(loaded, dict)
-    #assert set(loaded) == {'2018-07'}
-    #assert loaded['2018-07'].days[28].text == sample
+    assert isinstance(loaded, dict)
+    assert '2018-01' in loaded.keys()
+    assert '2018-02' in loaded.keys()
+    assert '2018-03' in loaded.keys()
+    for m in ('2018-01', '2018-02', '2018-03'):
+        assert loaded[m].days[5].text == some
+        assert loaded[m].days[6].text == something

@@ -191,7 +191,27 @@ class StorageSeparateFiles(Storage):
         return True
 
     def load_all_months_from_disk(self, data_dir):
-        return {}
+        logging.debug('Starting to load files in dir "%s"' % data_dir)
+        months = {}
+        for year in os.scandir(data_dir):
+            print('Year', year.name)
+            if year.is_dir():
+                for month in os.scandir(year.path):
+                    content = {}
+                    print('  Month', month.name)
+                    for day in os.scandir(month.path):
+                        print('    Day', day.name)
+                        d = ''
+                        with open( day.path, 'r') as f:
+                            d=f.read()
+                        content[int(day.name[4:-3])] = {'text' : d}
+                    mon = Month( int(year.name), int(month.name), content, os.path.getmtime(month.path))
+                    months[self.format_year_and_month( int(year.name), int(month.name))] = mon
+        print('Read', months['2018-01'].days)
+        logging.debug('Finished loading files in dir "%s"' % data_dir)
+        return months
+
+
     def load_all_years_from_disk(self):
         pass
     def load_all_other_Stuff_from_disk(self):
