@@ -62,3 +62,13 @@ def test_plain_separate():
     for m in ('2018-01', '2018-02', '2018-03'):
         assert loaded[m].days[5].text == some
         assert loaded[m].days[6].text == something
+
+def test_multiline_stuff():
+    multiline = "\n things\n\n other things\n"
+    sample_month = {
+        '2018-01': Month(2018, 1, {5: {'text': multiline}}) }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        storage.save_months_to_disk(sample_month, td, saveas=True)
+        loaded = storage.load_all_months_from_disk(td)
+    assert loaded['2018-01'].days[5].text == multiline
