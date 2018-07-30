@@ -182,10 +182,10 @@ class StorageSeparateFiles(Storage):
             for keyd, day in month.days.items():
                 assert int(keym[:-3]) == month.year_number
                 assert int(keym[-2:]) == month.month_number
-                print( '\t' + day.text )
+                #print( '\t' + day.text )
                 path = os.path.join (journal_dir, "%02i"%month.year_number,
                                      "%02i"%month.month_number )
-                print('Path:', path)
+                #print('Path:', path)
                 os.makedirs(path, exist_ok=True)
                 with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
                     f.write(day.text)
@@ -196,13 +196,13 @@ class StorageSeparateFiles(Storage):
         months = {}
         year_exp = re.compile('^\d{4}$')
         for year in os.scandir(data_dir):
-            print('Year', year.name)
+            #print('Year', year.name)
             if year.is_dir() and year_exp.match(year.name):
                 for month in os.scandir(year.path):
                     content = {}
-                    print('  Month', month.name)
+                    #print('  Month', month.name)
                     for day in os.scandir(month.path):
-                        print('    Day', day.name)
+                        #print('    Day', day.name)
                         d = ''
                         with open( day.path, 'r') as f:
                             d=f.read()
