@@ -189,6 +189,7 @@ class Journal:
 
         if self.storage_separate == 'True':
             self.storage = StorageSeparateFiles()
+            self.storage_legacy = FsStorage()
         else:
             self.storage=FsStorage()
 
@@ -318,6 +319,15 @@ class Journal:
             logging.error('Saving month files failed: {}'.format(err))
             self.frame.show_save_error_dialog(exit_imminent)
             something_saved = None
+
+        if self.storage_separate == 'True':
+            try:
+                something_saved_legacy = self.storage_legacy.save_months_to_disk(
+                    self.months, self.dirs.data_dir, exit_imminent, saveas)
+            except (IOError, OSError) as err:
+                logging.error('Saving legacy month files failed: {}'.format(err))
+                self.frame.show_save_error_dialog(exit_imminent)
+                something_saved = None
 
         if something_saved:
             self.show_message(_('The content has been saved to %s') % self.dirs.data_dir, error=False)
