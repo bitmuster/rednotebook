@@ -194,9 +194,10 @@ class StorageSeparateFiles(Storage):
     def load_all_months_from_disk(self, data_dir):
         logging.debug('Starting to load files in dir "%s"' % data_dir)
         months = {}
+        year_exp = re.compile('^\d{4}$')
         for year in os.scandir(data_dir):
             print('Year', year.name)
-            if year.is_dir():
+            if year.is_dir() and year_exp.match(year.name):
                 for month in os.scandir(year.path):
                     content = {}
                     print('  Month', month.name)
