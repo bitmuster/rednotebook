@@ -172,8 +172,9 @@ class FsStorage(Storage):
 class StorageSeparateFiles(Storage):
 
     def get_journal_files(self, data_dir):
-        pass
-
+        # Make check_journal_dir in menu.py happy this seems to be the only
+        # import check up to now
+        return [None]
 
     def save_months_to_disk(self, months, journal_dir,
                             exit_imminent=False, saveas=False):
@@ -207,7 +208,6 @@ class StorageSeparateFiles(Storage):
                         content[int(day.name[4:-3])] = {'text' : d}
                     mon = Month( int(year.name), int(month.name), content, os.path.getmtime(month.path))
                     months[self.format_year_and_month( int(year.name), int(month.name))] = mon
-        print('Read', months['2018-01'].days)
         logging.debug('Finished loading files in dir "%s"' % data_dir)
         return months
 

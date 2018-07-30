@@ -166,6 +166,7 @@ from rednotebook.util.statistics import Statistics
 from rednotebook.gui.main_window import MainWindow
 from rednotebook import index
 from rednotebook.storage import FsStorage
+from rednotebook.storage import StorageSeparateFiles
 from rednotebook.data import Month
 
 
@@ -181,9 +182,16 @@ class Journal:
         self.config = user_config
         self.config.save_state()
 
+        # Seems we need to use the config, so that is stored
+        self.storage_separate = self.config.read('storeSeparateFiles')
+
         logging.info('Running in portable mode: %s' % self.dirs.portable)
 
-        self.storage=FsStorage()
+        if self.storage_separate == 'True':
+            self.storage = StorageSeparateFiles()
+        else:
+            self.storage=FsStorage()
+
         self.month = None
         self.date = None
         self.months = {}
@@ -319,9 +327,6 @@ class Journal:
             self.show_message(_('The journal could not be saved'), error=False)
         else:
             self.show_message(_('Nothing to save'), error=False)
-
-        storage_type = self.config.read('storeSeparateFiles')
-        # Seems we need to use the config, so that is stored
 
         self.config.save_to_disk()
 
