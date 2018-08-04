@@ -1,3 +1,6 @@
+import os
+import os.path
+
 from tempfile import TemporaryDirectory
 
 from rednotebook.data import Month
@@ -72,3 +75,12 @@ def test_multiline_stuff():
         storage.save_months_to_disk(sample_months, td, saveas=True)
         loaded = storage.load_all_months_from_disk(td)
     assert loaded['2018-01'].days[5].text == multiline
+
+def test_avoid_empty_separated_entry():
+    content = ''
+    sample_months = {
+        '2018-01': Month(2018, 1, {7: {'text': content}}) }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        storage.save_months_to_disk(sample_months, td, saveas=True)
+        assert not os.path.exists(os.path.join(td, '2018/01/day-07.md'))

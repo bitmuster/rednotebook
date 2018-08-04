@@ -187,8 +187,9 @@ class StorageSeparateFiles(Storage):
                                      "%02i"%month.month_number )
                 #print('Path:', path)
                 os.makedirs(path, exist_ok=True)
-                with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
-                    f.write(day.text)
+                if day.text:
+                    with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
+                        f.write(day.text)
         return True
 
     def load_all_months_from_disk(self, data_dir):
