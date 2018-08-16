@@ -213,8 +213,27 @@ class StorageSeparateFiles(Storage):
         logging.debug('Finished loading files in dir "%s"' % data_dir)
         return months
 
-
     def load_all_years_from_disk(self):
         pass
     def load_all_other_Stuff_from_disk(self):
         pass
+
+    def save_tree_to_disk(self, path, tree):
+        basedir = os.path.join(path, 'Tree')
+        os.makedirs(basedir, exist_ok=True)
+        for k in tree.keys():
+            with open( os.path.join( basedir, k+'.md'), 'w') as f:
+                f.write(tree[k])
+
+    def load_tree_from_disk(self, dir):
+        basedir = os.path.join( dir , 'Tree')
+        ret = {}
+        md_exp = re.compile('.+\.md$')
+
+        for element in os.scandir( basedir ):
+            with open( element.path ) as f:
+                if md_exp.match(element.name):
+                    ret[element.name[:-3]] = f.read()
+                else:
+                    raise(SystemError)
+        return ret

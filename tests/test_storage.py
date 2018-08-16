@@ -1,6 +1,8 @@
 import os
 import os.path
 
+import pytest
+
 from tempfile import TemporaryDirectory
 
 from rednotebook.data import Month
@@ -84,3 +86,57 @@ def test_avoid_empty_separated_entry():
     with TemporaryDirectory() as td:
         storage.save_months_to_disk(sample_months, td, saveas=True)
         assert not os.path.exists(os.path.join(td, '2018/01/day-07.md'))
+
+
+def test_categories():
+    with TemporaryDirectory() as dir:
+        storage=StorageSeparateFiles()
+        tree = { 'ToDo': 'Content'}
+        fn = os.path.join(dir, 'Tree', 'ToDo.md')
+        storage.save_tree_to_disk( dir, tree)
+        assert os.path.isdir( os.path.join( dir, 'Tree'))
+        assert os.path.isfile(fn)
+        with open(fn) as f:
+            assert f.read() == tree['ToDo']
+
+        r = storage.load_tree_from_disk(dir)
+        assert isinstance(r, dict)
+        assert r['ToDo']=='Content'
+
+def test_multiple_categories():
+    with TemporaryDirectory() as dir:
+        storage=StorageSeparateFiles()
+        tree = { 'ToDo': 'Content', 'ToBuy' : 'Stuff', 'ToHack' : 'KLOC'}
+        storage.save_tree_to_disk( dir, tree)
+        r = storage.load_tree_from_disk(dir)
+        assert isinstance(r, dict)
+        assert r['ToDo']=='Content'
+        assert r['ToBuy']=='Stuff'
+        assert r['ToHack']=='KLOC'
+
+def test_categories_loading():
+    with TemporaryDirectory() as dir:
+        storage=StorageSeparateFiles()
+        os.makedirs(os.path.join( dir, 'Tree'), exist_ok=True)
+        with open( os.path.join( dir, 'Tree', 'wtf.md'), 'w') as f:
+            f.write('wtf')
+        with open( os.path.join( dir, 'Tree', 'ftw.md'), 'w') as f:
+            f.write('ftw')
+
+        r = storage.load_tree_from_disk(dir)
+        assert isinstance(r, dict)
+        assert r['wtf']=='wtf'
+        assert r['ftw']=='ftw'
+
+def test_categories_loading_wrong_extension():
+    with TemporaryDirectory() as dir:
+        storage=StorageSeparateFiles()
+        os.makedirs(os.path.join( dir, 'Tree'), exist_ok=True)
+        with open( os.path.join( dir, 'Tree', 'wtf.whatver'), 'w') as f:
+            f.write('wtf')
+        with pytest.raises(SystemError):
+            storage.load_tree_from_disk(dir)
+
+
+#    tree = { 'ToDo': 'Content', 'Things': { 'Thing1': 'Content1', 'Thing1': 'Content1'}}
+
