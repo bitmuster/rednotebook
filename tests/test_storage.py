@@ -137,6 +137,9 @@ def test_categories_loading_wrong_extension():
         with pytest.raises(SystemError):
             storage.load_tree_from_disk(dir)
 
-
-#    tree = { 'ToDo': 'Content', 'Things': { 'Thing1': 'Content1', 'Thing1': 'Content1'}}
-
+def test_no_nested_things_up_to_now():
+    tree = { 'ToDo': 'Content', 'Things': { 'Thing1': 'Content1', 'Thing1': 'Content1'}}
+    storage = StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        with pytest.raises( SystemError ):
+            storage.save_tree_to_disk(td, tree)

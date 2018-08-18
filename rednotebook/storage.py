@@ -222,6 +222,8 @@ class StorageSeparateFiles(Storage):
         basedir = os.path.join(path, 'Tree')
         os.makedirs(basedir, exist_ok=True)
         for k in tree.keys():
+            if not isinstance(tree[k], str):
+                raise SystemError
             with open( os.path.join( basedir, k+'.md'), 'w') as f:
                 f.write(tree[k])
 
