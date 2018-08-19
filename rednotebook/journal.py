@@ -96,9 +96,6 @@ from rednotebook import info
 from rednotebook import configuration
 from rednotebook import data
 
-
-args = info.get_commandline_parser().parse_args()
-
 # ---------------------- Enable logging -------------------------------
 
 
@@ -172,8 +169,8 @@ from rednotebook.data import Month
 
 class Journal:
     def __init__(self):
+        self.args = info.get_commandline_parser().parse_args()
         self.dirs = dirs
-
         user_config = configuration.Config(self.dirs.config_file)
         # Apply defaults where no custom values have been set
         for key, value in default_config.items():
@@ -240,7 +237,7 @@ class Journal:
         Retrieve the path from optional args or return standard value if args
         not present
         '''
-        if not args.journal:
+        if not self.args.journal:
             data_dir = self.config.read('dataDir', self.dirs.data_dir)
             if not os.path.isabs(data_dir):
                 data_dir = os.path.join(self.dirs.app_dir, data_dir)
@@ -251,7 +248,7 @@ class Journal:
         # or an absolute path /home/username/myjournal
         # Try to find the journal under the standard location or at the given
         # absolute or relative location
-        path_arg = args.journal
+        path_arg = self.args.journal
 
         logging.debug('Trying to find journal "%s"' % path_arg)
 
@@ -273,13 +270,14 @@ class Journal:
         '''
         Retrieve the date from optional args or otherwise return 'today'
         '''
-        if not args.start_date:
+        if not self.args.start_date:
             return datetime.date.today()
 
         try:
-            return dates.get_date_from_date_string(args.start_date)
+            return dates.get_date_from_date_string(self.args.start_date)
         except ValueError:
-            logging.error('Invalid date: %s (required format: YYYY-MM-DD).' % args.start_date)
+            logging.error('Invalid date: %s (required format: YYYY-MM-DD).' % \
+                    self.args.start_date)
             sys.exit(2)
 
     def exit(self):
