@@ -364,6 +364,16 @@ class Journal:
 
         self.months = self.storage.load_all_months_from_disk(data_dir)
 
+        # Add a kludge to at least load the files via the Day interface
+        self.tree = self.storage.load_tree_from_disk(data_dir)
+        kludgedays = {}
+        i = 1
+        for k in self.tree.keys():
+            kludgedays [i] = {'text' : self.tree[k]}
+            i+=1
+        month_of_kludge = {'2000-01': Month(2000, 1, kludgedays),}
+        self.months.update(month_of_kludge)
+
         # Nothing to save before first day change
         self.load_day(self.actual_date)
 
