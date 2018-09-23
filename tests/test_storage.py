@@ -87,6 +87,19 @@ def test_avoid_empty_separated_entry():
         storage.save_months_to_disk(sample_months, td, saveas=True)
         assert not os.path.exists(os.path.join(td, '2018/01/day-07.md'))
 
+def test_save_months_to_disk_wrong_input_type_month():
+    sample_months = None
+    td='somewhere'
+    storage=StorageSeparateFiles()
+    with pytest.raises(SystemError):
+        storage.save_months_to_disk(sample_months, td, saveas=True)
+
+def test_save_months_to_disk_wrong_input_dir():
+    sample_months = {}
+    td='nowhere'
+    storage=StorageSeparateFiles()
+    with pytest.raises(SystemError):
+        storage.save_months_to_disk(sample_months, td, saveas=True)
 
 def test_categories():
     with TemporaryDirectory() as dir:

@@ -188,6 +188,10 @@ class StorageSeparateFiles(Storage):
                             exit_imminent=False, saveas=False):
         """Save the day-based part to disk"""
 
+        if not isinstance(months, dict):
+            raise SystemError
+        if not os.path.exists(journal_dir):
+            raise SystemError
         for keym, month in months.items():
             for keyd, day in month.days.items():
                 assert int(keym[:-3]) == month.year_number
