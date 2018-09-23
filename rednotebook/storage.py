@@ -170,6 +170,14 @@ class FsStorage(Storage):
         return something_saved
 
 class StorageSeparateFiles(Storage):
+    """Provides the backend for a journal storage within separate files.
+    Daily records are stored in a folder tree consisting of
+    <year>/<month>/day-<num>.md
+    Like: 2018/01/day-15.md
+    In addition, a tree of notes shall be stored in a sub-folder named "Tree".
+    Like: Tree/<note-name>.md
+    Note: At current, subfolders are not supported yet.
+    """
 
     def get_journal_files(self, data_dir):
         # Make check_journal_dir in menu.py happy this seems to be the only
@@ -178,6 +186,8 @@ class StorageSeparateFiles(Storage):
 
     def save_months_to_disk(self, months, journal_dir,
                             exit_imminent=False, saveas=False):
+        """Save the day-based part to disk"""
+
         for keym, month in months.items():
             for keyd, day in month.days.items():
                 assert int(keym[:-3]) == month.year_number
@@ -193,6 +203,8 @@ class StorageSeparateFiles(Storage):
         return True
 
     def load_all_months_from_disk(self, data_dir):
+        """Load the day-based part from disk"""
+
         logging.debug('Starting to load files in dir "%s"' % data_dir)
         months = {}
         year_exp = re.compile('^\d{4}$')
@@ -219,6 +231,8 @@ class StorageSeparateFiles(Storage):
         pass
 
     def save_tree_to_disk(self, path, tree):
+        """Save a structured note tree to disk"""
+
         basedir = os.path.join(path, 'Tree')
         os.makedirs(basedir, exist_ok=True)
         for k in tree.keys():
@@ -228,6 +242,8 @@ class StorageSeparateFiles(Storage):
                 f.write(tree[k])
 
     def load_tree_from_disk(self, dir):
+        """Load a structured note tree from disk"""
+
         basedir = os.path.join( dir , 'Tree')
         ret = {}
         md_exp = re.compile('.+\.md$')
