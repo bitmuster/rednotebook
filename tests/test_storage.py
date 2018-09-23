@@ -2,6 +2,7 @@ import os
 import os.path
 
 import pytest
+# See also https://pypi.org/project/pytest-mock/
 
 from tempfile import TemporaryDirectory
 
@@ -86,6 +87,16 @@ def test_avoid_empty_separated_entry():
     with TemporaryDirectory() as td:
         storage.save_months_to_disk(sample_months, td, saveas=True)
         assert not os.path.exists(os.path.join(td, '2018/01/day-07.md'))
+
+def test_save_months_to_disk_open_error(mocker):
+    mocker.patch('builtins.open', side_effect = OSError)
+    content = 'content'
+    sample_months = {
+        '2018-01': Month(2018, 1, {7: {'text': content}}) }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        with pytest.raises(OSError):
+            storage.save_months_to_disk(sample_months, td, saveas=True)
 
 def test_save_months_to_disk_wrong_input_type_month():
     sample_months = None

@@ -202,8 +202,12 @@ class StorageSeparateFiles(Storage):
                 #print('Path:', path)
                 os.makedirs(path, exist_ok=True)
                 if day.text:
-                    with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
-                        f.write(day.text)
+                    try:
+                        with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
+                            f.write(day.text)
+                    except OSError as err:
+                        print("Error while writing to file: {0}".format(err))
+                        raise OSError
         return True
 
     def load_all_months_from_disk(self, data_dir):
