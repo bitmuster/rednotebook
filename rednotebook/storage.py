@@ -192,23 +192,34 @@ class StorageSeparateFiles(Storage):
             raise SystemError
         if not os.path.exists(journal_dir):
             raise SystemError
+
+        if not saveas:
+            return False
+
+        wrote = False
+
         for keym, month in months.items():
-            for keyd, day in month.days.items():
-                assert int(keym[:-3]) == month.year_number
-                assert int(keym[-2:]) == month.month_number
-                #print( '\t' + day.text )
-                path = os.path.join (journal_dir, "%02i"%month.year_number,
-                                     "%02i"%month.month_number )
-                #print('Path:', path)
-                os.makedirs(path, exist_ok=True)
-                if day.text:
-                    try:
-                        with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
-                            f.write(day.text)
-                    except OSError as err:
-                        print("Error while writing to file: {0}".format(err))
-                        raise OSError
-        return True
+            if month.edited:
+                for keyd, day in month.days.items():
+
+                    #how does a key look like???
+                    #can we have a better solution????
+                    assert int(keym[:-3]) == month.year_number
+                    assert int(keym[-2:]) == month.month_number
+                    #print( '\t' + day.text )
+                    path = os.path.join (journal_dir, "%02i"%month.year_number,
+                                         "%02i"%month.month_number )
+                    #print('Path:', path)
+                    os.makedirs(path, exist_ok=True)
+                    if day.text:
+                        try:
+                            with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
+                                f.write(day.text)
+                                wrote = True
+                        except OSError as err:
+                            print("Error while writing to file: {0}".format(err))
+                            raise OSError
+        return wrote
 
     def load_all_months_from_disk(self, data_dir):
         """Load the day-based part from disk"""

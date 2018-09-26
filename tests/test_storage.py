@@ -2,7 +2,9 @@ import os
 import os.path
 
 import pytest
-# See also https://pypi.org/project/pytest-mock/
+# See also
+# - https://pypi.org/project/pytest-mock/
+# - https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock
 
 from tempfile import TemporaryDirectory
 
@@ -56,9 +58,12 @@ def test_plain_separate():
         '2018-02': Month(2018, 2, {5: {'text': some}, 6: {'text': something}}),
         '2018-03': Month(2018, 3, {5: {'text': some}, 6: {'text': something}}),
     }
+    sample_months['2018-01'].edited=True
+    sample_months['2018-02'].edited=True
+    sample_months['2018-03'].edited=True
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
-        storage.save_months_to_disk(sample_months, td, saveas=True)
+        ret = storage.save_months_to_disk(sample_months, td, saveas=True)
         loaded = storage.load_all_months_from_disk(td)
 
     assert isinstance(loaded, dict)
@@ -68,11 +73,24 @@ def test_plain_separate():
     for m in ('2018-01', '2018-02', '2018-03'):
         assert loaded[m].days[5].text == some
         assert loaded[m].days[6].text == something
+    assert ret ==  True
+
+def test_save_months_to_disk_no_change():
+    some = "something"
+    something = "something completely different"
+    sample_months = {
+        '2018-01': Month(2018, 1, {5: {'text': some}, 6: {'text': something}}),
+    }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        ret = storage.save_months_to_disk(sample_months, td, saveas=True)
+    assert ret ==  False
 
 def test_multiline_stuff():
     multiline = "\n things\n\n other things\n"
     sample_months = {
         '2018-01': Month(2018, 1, {5: {'text': multiline}}) }
+    sample_months['2018-01'].edited=True
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
         storage.save_months_to_disk(sample_months, td, saveas=True)
@@ -85,18 +103,32 @@ def test_avoid_empty_separated_entry():
         '2018-01': Month(2018, 1, {7: {'text': content}}) }
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
-        storage.save_months_to_disk(sample_months, td, saveas=True)
+        ret = storage.save_months_to_disk(sample_months, td, saveas=True)
         assert not os.path.exists(os.path.join(td, '2018/01/day-07.md'))
+    assert ret == False
 
 def test_save_months_to_disk_open_error(mocker):
     mocker.patch('builtins.open', side_effect = OSError)
     content = 'content'
     sample_months = {
         '2018-01': Month(2018, 1, {7: {'text': content}}) }
+    sample_months['2018-01'].edited=True
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
         with pytest.raises(OSError):
             storage.save_months_to_disk(sample_months, td, saveas=True)
+
+def test_save_months_to_disk_no_saveas(mocker):
+    mocker.patch('builtins.open')
+    content = 'content'
+    sample_months = {
+        '2018-01': Month(2018, 1, {7: {'text': content}}) }
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+            ret = storage.save_months_to_disk(sample_months, td, saveas=False)
+    open.assert_not_called()
+    assert ret == False
+
 
 def test_save_months_to_disk_wrong_input_type_month():
     sample_months = None
