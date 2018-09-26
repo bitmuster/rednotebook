@@ -184,6 +184,20 @@ class StorageSeparateFiles(Storage):
         # import check up to now
         return [None]
 
+
+    def write_file(self, day_num, day, path):
+        os.makedirs(path, exist_ok=True)
+        pattern = "day-%02i.md"
+        if day.text:
+            try:
+                with open(os.path.join(path, pattern%day_num), 'w') as f:
+                    f.write(day.text)
+                    wrote = True
+            except OSError as err:
+                print ("Error while writing to file: {0}".format(err))
+                raise OSError
+        return wrote
+
     def save_months_to_disk(self, months, journal_dir,
                             exit_imminent=False, saveas=False):
         """Save the day-based part to disk"""
@@ -202,23 +216,14 @@ class StorageSeparateFiles(Storage):
             if month.edited:
                 for keyd, day in month.days.items():
 
-                    #how does a key look like???
-                    #can we have a better solution????
+                    # keym e.g. '2018-01'
                     assert int(keym[:-3]) == month.year_number
                     assert int(keym[-2:]) == month.month_number
                     #print( '\t' + day.text )
                     path = os.path.join (journal_dir, "%02i"%month.year_number,
                                          "%02i"%month.month_number )
                     #print('Path:', path)
-                    os.makedirs(path, exist_ok=True)
-                    if day.text:
-                        try:
-                            with open( os.path.join(path,"day-%02i.md"%keyd), 'w' ) as f:
-                                f.write(day.text)
-                                wrote = True
-                        except OSError as err:
-                            print("Error while writing to file: {0}".format(err))
-                            raise OSError
+                    wrote = self.write_file(keyd, day, path)
         return wrote
 
     def load_all_months_from_disk(self, data_dir):

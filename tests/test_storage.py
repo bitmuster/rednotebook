@@ -9,6 +9,7 @@ import pytest
 from tempfile import TemporaryDirectory
 
 from rednotebook.data import Month
+from rednotebook.data import Day
 from rednotebook.storage import FsStorage
 from rednotebook.storage import StorageSeparateFiles
 
@@ -118,6 +119,14 @@ def test_save_months_to_disk_open_error(mocker):
         with pytest.raises(OSError):
             storage.save_months_to_disk(sample_months, td, saveas=True)
 
+def test_write_file_open_error(mocker):
+    mocker.patch('builtins.open', side_effect = OSError)
+    content = {'text': 'content'}
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        with pytest.raises( OSError ):
+            storage.write_file(7, Day( Month(2018, 1), 1, content), td)
+
 def test_save_months_to_disk_no_saveas(mocker):
     mocker.patch('builtins.open')
     content = 'content'
@@ -128,7 +137,6 @@ def test_save_months_to_disk_no_saveas(mocker):
             ret = storage.save_months_to_disk(sample_months, td, saveas=False)
     open.assert_not_called()
     assert ret == False
-
 
 def test_save_months_to_disk_wrong_input_type_month():
     sample_months = None
