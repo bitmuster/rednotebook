@@ -84,7 +84,7 @@ def test_save_months_to_disk_no_change():
     }
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
-        ret = storage.save_months_to_disk(sample_months, td, saveas=True)
+        ret = storage.save_months_to_disk(sample_months, td, saveas=False)
     assert ret ==  False
 
 def test_multiline_stuff():
@@ -127,7 +127,7 @@ def test_write_file_open_error(mocker):
         with pytest.raises( OSError ):
             storage.write_file(7, Day( Month(2018, 1), 1, content), td)
 
-def test_save_months_to_disk_no_saveas(mocker):
+def test_save_months_to_disk_no_saveas_no_edit(mocker):
     mocker.patch('builtins.open')
     content = 'content'
     sample_months = {
@@ -137,6 +137,27 @@ def test_save_months_to_disk_no_saveas(mocker):
             ret = storage.save_months_to_disk(sample_months, td, saveas=False)
     open.assert_not_called()
     assert ret == False
+
+def test_save_months_to_disk_no_saveas_two_edits(mocker):
+    mock = mocker.patch.object(StorageSeparateFiles, 'write_file')
+    mock.side_effect=[True, True, False]
+    something = 'content'
+    sample_months = {
+        '2018-01': Month(2018, 1, { 6: {'text': something}}),
+        '2018-02': Month(2018, 2, { 6: {'text': something}}),
+        '2018-03': Month(2018, 3, { 6: {'text': something}}),
+    }
+    sample_months['2018-01'].edited=True
+    sample_months['2018-02'].edited=True
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+            ret = storage.save_months_to_disk(sample_months, td, saveas=False)
+
+    calls = [
+        mocker.call(mocker.ANY, mocker.ANY, mocker.ANY),
+        mocker.call(mocker.ANY, mocker.ANY, mocker.ANY)]
+    mock.assert_has_calls( calls )
+    assert ret == True
 
 def test_save_months_to_disk_wrong_input_type_month():
     sample_months = None

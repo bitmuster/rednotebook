@@ -184,10 +184,10 @@ class StorageSeparateFiles(Storage):
         # import check up to now
         return [None]
 
-
     def write_file(self, day_num, day, path):
         os.makedirs(path, exist_ok=True)
         pattern = "day-%02i.md"
+        wrote = False
         if day.text:
             try:
                 with open(os.path.join(path, pattern%day_num), 'w') as f:
@@ -207,13 +207,10 @@ class StorageSeparateFiles(Storage):
         if not os.path.exists(journal_dir):
             raise SystemError
 
-        if not saveas:
-            return False
-
         wrote = False
 
         for keym, month in months.items():
-            if month.edited:
+            if month.edited or saveas:
                 for keyd, day in month.days.items():
 
                     # keym e.g. '2018-01'
