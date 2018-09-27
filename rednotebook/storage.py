@@ -224,7 +224,12 @@ class StorageSeparateFiles(Storage):
         return wrote
 
     def load_all_months_from_disk(self, data_dir):
-        """Load the day-based part from disk"""
+        """
+        Load all day files and return a directory mapping year-month values
+        to month objects.
+        """
+        if not os.path.exists( data_dir ):
+            raise SystemError('Folder {0} not found'.format(data_dir))
 
         logging.debug('Starting to load files in dir "%s"' % data_dir)
         months = {}

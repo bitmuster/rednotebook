@@ -173,6 +173,18 @@ def test_save_months_to_disk_wrong_input_dir():
     with pytest.raises(SystemError):
         storage.save_months_to_disk(sample_months, td, saveas=True)
 
+def test_load_all_months_from_disk_empty():
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        loaded = storage.load_all_months_from_disk(td)
+    assert loaded == {}
+
+def test_load_all_months_from_disk_nonexistent():
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        with pytest.raises(SystemError):
+            storage.load_all_months_from_disk(td + '/nonono')
+
 def test_categories():
     with TemporaryDirectory() as dir:
         storage=StorageSeparateFiles()
