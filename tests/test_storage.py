@@ -13,6 +13,7 @@ from rednotebook.data import Day
 from rednotebook.storage import FsStorage
 from rednotebook.storage import StorageSeparateFiles
 
+# Tests for save and load roundtrips
 
 def test_roundtrip():
     sample_text1 = "This is some sample text"
@@ -98,6 +99,8 @@ def test_multiline_stuff():
         loaded = storage.load_all_months_from_disk(td)
     assert loaded['2018-01'].days[5].text == multiline
 
+# Tests for save feature
+
 def test_avoid_empty_separated_entry():
     content = ''
     sample_months = {
@@ -173,6 +176,8 @@ def test_save_months_to_disk_wrong_input_dir():
     with pytest.raises(SystemError):
         storage.save_months_to_disk(sample_months, td, saveas=True)
 
+# Tests for load feature
+
 def test_load_all_months_from_disk_empty():
     storage=StorageSeparateFiles()
     with TemporaryDirectory() as td:
@@ -184,6 +189,8 @@ def test_load_all_months_from_disk_nonexistent():
     with TemporaryDirectory() as td:
         with pytest.raises(SystemError):
             storage.load_all_months_from_disk(td + '/nonono')
+
+# Tests for categories
 
 def test_categories():
     with TemporaryDirectory() as dir:
