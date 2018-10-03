@@ -1,5 +1,6 @@
 import os
 import os.path
+import pathlib
 
 import pytest
 # See also
@@ -189,6 +190,46 @@ def test_load_all_months_from_disk_nonexistent():
     with TemporaryDirectory() as td:
         with pytest.raises(SystemError):
             storage.load_all_months_from_disk(td + '/nonono')
+
+def test_load_month_from_disk_empty():
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        storage.load_month_from_disk(2014, 8, td )
+
+def test_load_month_from_disk():
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        with open(td + '/day-05.md', 'w') as f:
+            f.write('Bam')
+        loaded = storage.load_month_from_disk(2014, 8, td)
+        assert loaded.days[5].text == "Bam"
+
+def test_load_month_from_disk_wrong_filename(mocker):
+    mocker.patch('builtins.open')
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        p = pathlib.Path(td + '/Frog.md')
+        p.touch()
+        storage.load_month_from_disk(2014, 8, td)
+    open.assert_not_called()
+
+def test_load_month_from_disk_incorrect_day_1(mocker):
+    mocker.patch('builtins.open')
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        p = pathlib.Path(td + '/day-00.md')
+        p.touch()
+        storage.load_month_from_disk(2014, 8, td)
+    open.assert_not_called()
+
+def test_load_month_from_disk_incorrect_day_2(mocker):
+    mocker.patch('builtins.open')
+    storage=StorageSeparateFiles()
+    with TemporaryDirectory() as td:
+        p = pathlib.Path(td + '/day-32.md')
+        p.touch()
+        storage.load_month_from_disk(2014, 8, td)
+    open.assert_not_called()
 
 # Tests for categories
 

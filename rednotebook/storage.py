@@ -223,19 +223,32 @@ class StorageSeparateFiles(Storage):
                     wrote = self.write_file(keyd, day, path)
         return wrote
 
-    def load_month_from_disk(self, year, month):
-        """"Load all day files from a month directory into a Month object"""
-        content = {}
-        #print('Month', month.name) #e.g. 02
-        for day in os.scandir(month.path):
-            #print('Day', day.name) # e.g. day-05.md
-            d = '' #try
-            with open(day.path, 'r') as f:
-                d = f.read()
-            content[int(day.name[4:-3])] = {'text':d}
+    def load_month_from_disk(self, year, month, path):
+        """"Load all day files from a month directory into a Month object
+        year: integer with year
+        month: integer with month
+        path: path to folder
+        """
 
-        mon = Month(int(year.name), int(month.name), content,
-                    os.path.getmtime(month.path))
+        day_exp = re.compile('^day-(\d{2}).md$') # e.g. day-05.md
+        content = {}
+
+        for day in os.scandir(path):
+            match = day_exp.match(day.name)
+            if match :
+                day_number = int(match.groups()[0])
+                if day_number >= 1 and day_number <= 31 :
+                    d = ''
+                    with open(day.path, 'r') as f:
+                        d = f.read()
+                    content[day_number] = {'text':d}
+                else:
+                    pass # Ignore others
+            else:
+                pass # Ignore others
+
+        mon = Month(year, month, content,
+                    os.path.getmtime(month))
         return mon
 
     def load_all_months_from_disk(self, data_dir):
@@ -254,9 +267,11 @@ class StorageSeparateFiles(Storage):
             #print('Year', year.name)
             if year.is_dir() and year_exp.match(year.name):
                 for month in os.scandir(year.path):
-                    mon = self.load_month_from_disk(year, month)
+                    mon = self.load_month_from_disk( int(year.name),
+                                        int(month.name), month.path)
                     months[self.format_year_and_month( int(year.name),
                             int(month.name))] = mon
+
         logging.debug('Finished loading files in dir "%s"' % data_dir)
         return months
 
