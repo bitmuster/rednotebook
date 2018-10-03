@@ -224,16 +224,18 @@ class StorageSeparateFiles(Storage):
         return wrote
 
     def load_month_from_disk(self, year, month):
+        """"Load all day files from a month directory into a Month object"""
         content = {}
-        #print('  Month', month.name)
+        #print('Month', month.name) #e.g. 02
         for day in os.scandir(month.path):
-            #print('    Day', day.name)
+            #print('Day', day.name) # e.g. day-05.md
             d = '' #try
             with open(day.path, 'r') as f:
                 d = f.read()
             content[int(day.name[4:-3])] = {'text':d}
 
-        mon = Month(int(year.name), int(month.name), content, os.path.getmtime(month.path))
+        mon = Month(int(year.name), int(month.name), content,
+                    os.path.getmtime(month.path))
         return mon
 
     def load_all_months_from_disk(self, data_dir):
