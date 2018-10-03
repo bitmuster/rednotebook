@@ -223,11 +223,25 @@ class StorageSeparateFiles(Storage):
                     wrote = self.write_file(keyd, day, path)
         return wrote
 
+    def load_month_from_disk(self, year, month):
+        content = {}
+        #print('  Month', month.name)
+        for day in os.scandir(month.path):
+            #print('    Day', day.name)
+            d = '' #try
+            with open(day.path, 'r') as f:
+                d = f.read()
+            content[int(day.name[4:-3])] = {'text':d}
+
+        mon = Month(int(year.name), int(month.name), content, os.path.getmtime(month.path))
+        return mon
+
     def load_all_months_from_disk(self, data_dir):
         """
         Load all day files and return a directory mapping year-month values
         to month objects.
         """
+
         if not os.path.exists( data_dir ):
             raise SystemError('Folder {0} not found'.format(data_dir))
 
@@ -238,16 +252,9 @@ class StorageSeparateFiles(Storage):
             #print('Year', year.name)
             if year.is_dir() and year_exp.match(year.name):
                 for month in os.scandir(year.path):
-                    content = {}
-                    #print('  Month', month.name)
-                    for day in os.scandir(month.path):
-                        #print('    Day', day.name)
-                        d = ''
-                        with open( day.path, 'r') as f:
-                            d=f.read()
-                        content[int(day.name[4:-3])] = {'text' : d}
-                    mon = Month( int(year.name), int(month.name), content, os.path.getmtime(month.path))
-                    months[self.format_year_and_month( int(year.name), int(month.name))] = mon
+                    mon = self.load_month_from_disk(year, month)
+                    months[self.format_year_and_month( int(year.name),
+                            int(month.name))] = mon
         logging.debug('Finished loading files in dir "%s"' % data_dir)
         return months
 
