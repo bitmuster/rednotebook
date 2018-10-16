@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 -->
+<!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <requires lib="gtksourceview" version="3.0"/>
   <object class="GtkAboutDialog" id="about_dialog">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -645,7 +646,7 @@
                             <property name="can_focus">True</property>
                             <property name="shadow_type">in</property>
                             <child>
-                              <object class="GtkTextView" id="day_text_view">
+                              <object class="GtkSourceView" id="day_text_view">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="wrap_mode">word</property>
@@ -688,7 +689,6 @@
                                     <property name="use_underline">True</property>
                                     <property name="stock_id">gtk-edit</property>
                                     <signal name="clicked" handler="on_add_new_entry_button_clicked" swapped="no"/>
-                                    <accelerator key="N" signal="clicked" modifiers="GDK_CONTROL_MASK"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
