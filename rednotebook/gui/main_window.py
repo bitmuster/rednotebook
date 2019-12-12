@@ -520,7 +520,7 @@ class MainWindow:
 
     def on_quick_link_D_button_clicked(self, widget):
         print('D Kludge')
-        self.journal.load_day( datetime.date(2000,1,1) )
+        self.journal.load_day( datetime.date(2019,1,1) )
 
     def on_quick_link_E_button_clicked(self, widget):
         print('E Kludge')
