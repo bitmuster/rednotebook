@@ -292,11 +292,14 @@ class StorageSeparateFiles(Storage):
         basedir = os.path.join( dir , 'Tree')
         ret = {}
         md_exp = re.compile('.+\.md$')
-
-        for element in os.scandir( basedir ):
-            with open( element.path ) as f:
-                if md_exp.match(element.name):
-                    ret[element.name[:-3]] = f.read()
-                else:
-                    raise(SystemError)
+        try:
+            for element in os.scandir( basedir ):
+                with open( element.path ) as f:
+                    if md_exp.match(element.name):
+                        ret[element.name[:-3]] = f.read()
+                    else:
+                        raise(SystemError)
+        except:
+            #pass
+            raise(SystemError)
         return ret
