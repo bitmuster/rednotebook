@@ -164,7 +164,7 @@ from rednotebook import backup
 from rednotebook.util.statistics import Statistics
 from rednotebook.gui.main_window import MainWindow
 from rednotebook.storage import FsStorage
-from rednotebook.storage import StorageSeparateFiles
+from rednotebook.storage_separate import StorageSeparateFiles
 from rednotebook import storage
 from rednotebook.data import Month
 

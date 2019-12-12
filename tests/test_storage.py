@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 from rednotebook.data import Month
 from rednotebook.data import Day
 from rednotebook.storage import FsStorage
-from rednotebook.storage import StorageSeparateFiles
+from rednotebook.storage_separate import StorageSeparateFiles
 
 # Tests for save and load roundtrips
 

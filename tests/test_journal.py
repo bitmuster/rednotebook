@@ -9,7 +9,7 @@ from tempfile import TemporaryDirectory
 import rednotebook
 from rednotebook.data import Month
 from rednotebook.journal import Journal
-from rednotebook.storage import StorageSeparateFiles
+from rednotebook.storage_separate import StorageSeparateFiles
 from rednotebook.gui.categories import CategoriesTreeView
 
 def disable_test_journal_init(mocker):
