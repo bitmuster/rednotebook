@@ -136,11 +136,6 @@ class FsStorage(Storage):
 
         if os.path.exists(filename):
             mtime = os.path.getmtime(filename)
-            if mtime != month.mtime:
-                conflict = get_filename('.CONFLICT_BACKUP' + str(mtime))
-                logging.debug('Last edit time of %s conflicts with edit time at file load\n'
-                              '--> Backing up to %s' % (filename, conflict))
-                shutil.copy2(filename, conflict)
             shutil.copy2(filename, old)
         shutil.move(new, filename)
         if os.path.exists(old):
